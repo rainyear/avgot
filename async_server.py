@@ -1,12 +1,12 @@
 from sanic import Sanic
 from sanic.response import text
-from asyncio import sleep
+import asyncio
 app = Sanic(__name__)
 
 @app.route("/<word>")
 @app.route("/")
 async def index(req, word=""):
-    await sleep(len(word)/10)
-    return text("Hello {}".format(word))
-
+    t = len(word) / 10
+    await asyncio.sleep(t)
+    return text("It costs {}s to process `{}`!".format(t, word))
 app.run()
