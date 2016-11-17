@@ -2,6 +2,7 @@ from avgot import AvBrowser
 import re
 import asyncio
 import motor.motor_asyncio
+import time
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['db_hxz']
 loop = asyncio.get_event_loop()
@@ -12,7 +13,7 @@ def lenn(n):
 @av.entry("https://www.douban.com/group/haixiuzu/discussion?start=0", re.compile('.'))
 async def main(result, *parent):
     pages = [("https://www.douban.com/group/haixiuzu/discussion?start={}".format(p),) for p in range(0,2500,25)]
-    return pages[:1]
+    return pages[:20]
 @av.register(re.compile('<td class="title">[\s\S]*?<a href="(.*?)" title="(.*?)" class="">'))
 async def page(result, *parent):
     result = filter(lambda row: '晒' in row[1], filter(lenn(2), result))
@@ -29,6 +30,7 @@ async def detail(result, *parent):
         doc['topictitle'] = parent[0][1]
         doc['topicurl'] = parent[0][0]
         doc['imgs'] = []
+        doc['ts'] = int(time.time())
         imgs = re.findall(r'<img src="(.*?)"', res[2])
         for img in imgs:
             doc['imgs'].append(img)
